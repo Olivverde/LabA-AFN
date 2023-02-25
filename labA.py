@@ -79,9 +79,11 @@ class Libs(object):
             elif c == ')':
                 balance_score -= 1
             
-            if balance_score != 0:
-                print("ERROR: EXPRESIÓN DESBALANCEADA!!!!")
-                raise SystemExit
+        if balance_score != 0:
+            print('---------------------------------------')
+            print("ERROR: EXPRESIÓN DESBALANCEADA!!!")
+            print('---------------------------------------')
+            raise SystemExit
         
         return string
 
@@ -432,15 +434,13 @@ class NFA(object):
                 structure = Structures()
                 structure.append_edges(current_edge)
                 trans.insert_transitions(structure)
-        
-        print(trans.transitions)
-        
+                
         # Crear un nuevo gráfico de red vacío
         G = nx.DiGraph()
 
         
         end_node_id = []
-        ind = -2
+        ind = -1
         for i in range(len(trans.transitions[ind].sub_transitions)):
             
             # print('Edge: ',i)
@@ -471,7 +471,7 @@ class NFA(object):
         
         
         print('---------------------------')
-        print('INITIAL NODE:',0,'\nFINAL NODE:',self.find_last_index(end_node_id))
+        print('INITIAL STATE:',0,'\nFINAL STATE:',self.find_last_index(end_node_id))
         print('---------------------------')
         pos = nx.spring_layout(G)
         nx.draw_networkx_nodes(G, pos)
@@ -481,13 +481,13 @@ class NFA(object):
         plt.show()
 
 re_list = ['(a|b)*(b|a)*abb','((ε|a)b*)*','(.|;)*-/.(.|;)*','(x|t)+((a|m)?)+','("(.(;(.;(.|;)+)*)*)*']
-re = re_list[4]
+re = re_list[-1]
 
 lib = Libs(re)
 postfix = lib.get_postfix()
 print('---------------------------')
 print('TRADUCCION:',lib.get_printable_trans())
-print('POSTFIX:',lib.get_printable_postfix(),postfix)
+print('POSTFIX:',lib.get_printable_postfix())
 print('---------------------------')
 nfa = NFA()
 nfa.thompson(postfix)
