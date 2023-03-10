@@ -494,15 +494,3 @@ class NFA(object):
 
     def get_transitions(self):
         return self.AFN_transitions
-
-re_list = ['(a|b)*(b|a)*abb','((ε|a)b*)*','(.|;)*-/.(.|;)*','(x|t)+((a|m)?)+','("(.(;(.;(.|;)+)*)*)*']
-re = re_list[1]
-
-lib = Libs(re)
-postfix = lib.get_postfix()
-print('---------------------------')
-print('TRADUCCION:',lib.get_printable_trans())
-print('POSTFIX:',lib.get_printable_postfix())
-print('---------------------------')
-nfa = NFA()
-nfa.thompson(postfix)
