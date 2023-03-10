@@ -240,7 +240,13 @@ class Transitions(object):
     
     def insert_transitions(self, structure):
         self.transitions.append(structure)
+    
+    def set_initial_state(self, state):
+        self.initial_state = state
         
+    def set_acceptance_state(self, state):
+        self.acceptance_state = state
+           
 class NFA(object):  
     
     def __init__(self, postfix=None) -> None:
@@ -444,9 +450,11 @@ class NFA(object):
             
             # print('Edge: ',i)
             
-            init_dg = trans.transitions[ind].sub_transitions[i].local_init_node.id
-            end_dg = trans.transitions[ind].sub_transitions[i].local_end_node.id
-            elem_dg = trans.transitions[ind].sub_transitions[i].trans_element
+            self.AFN_transitions = trans.transitions[ind] 
+            
+            init_dg = self.AFN_transitions.sub_transitions[i].local_init_node.id            
+            end_dg = self.AFN_transitions.sub_transitions[i].local_end_node.id
+            elem_dg = self.AFN_transitions.sub_transitions[i].trans_element
             end_node_id.append(end_dg)
             if elem_dg in li.dicc:
                 elem_dg = li.dicc[elem_dg]
@@ -468,10 +476,15 @@ class NFA(object):
         # Dibujar el gráfico
         
         
+        trans.set_initial_state(0)
+        trans.set_acceptance_state(self.find_last_index(end_node_id))
+
+        print('---------------------------')
+        print('INITIAL STATE:',trans.initial_state,'\nFINAL STATE:',trans.acceptance_state)
+        print('---------------------------')
         
-        print('---------------------------')
-        print('INITIAL STATE:',0,'\nFINAL STATE:',self.find_last_index(end_node_id))
-        print('---------------------------')
+        
+        
         pos = nx.spring_layout(G)
         nx.draw_networkx_nodes(G, pos)
         nx.draw_networkx_edges(G, pos)
@@ -479,8 +492,11 @@ class NFA(object):
         nx.draw_networkx_labels(G, pos)
         plt.show()
 
+    def get_transitions(self):
+        return self.AFN_transitions
+
 re_list = ['(a|b)*(b|a)*abb','((ε|a)b*)*','(.|;)*-/.(.|;)*','(x|t)+((a|m)?)+','("(.(;(.;(.|;)+)*)*)*']
-re = re_list[0]
+re = re_list[1]
 
 lib = Libs(re)
 postfix = lib.get_postfix()
@@ -489,4 +505,4 @@ print('TRADUCCION:',lib.get_printable_trans())
 print('POSTFIX:',lib.get_printable_postfix())
 print('---------------------------')
 nfa = NFA()
-nfa.thompson('ab|*ba|*.a.b.b.')
+nfa.thompson(postfix)
